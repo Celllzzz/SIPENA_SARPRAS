@@ -6,16 +6,16 @@ use App\Http\Controllers\TindakLanjutController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\PemeliharaanController;
 use App\Http\Controllers\NotifikasiController; 
-use App\Http\Controllers\EksporController;     
+use App\Http\Controllers\EksporController;
+use App\Http\Controllers\DashboardController;     
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

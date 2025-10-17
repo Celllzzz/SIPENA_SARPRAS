@@ -13,7 +13,7 @@ class PemeliharaanController extends Controller
     public function rutin(): View
     {
         // Path view diubah ke folder admin
-        return view('admin.pemeliharaan.rutin');
+        return view('admin.rutin');
     }
 
     /**
@@ -22,6 +22,6 @@ class PemeliharaanController extends Controller
     public function darurat(): View
     {
         // Path view diubah ke folder admin
-        return view('admin.pemeliharaan.darurat');
+        return view('admin.darurat');
     }
 }
