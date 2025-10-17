@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PelaporanController;
 use App\Http\Controllers\TindakLanjutController;
 use App\Http\Controllers\Auth\AdminController;
+use App\Http\Controllers\PemeliharaanController;
+use App\Http\Controllers\NotifikasiController; 
+use App\Http\Controllers\EksporController;     
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +37,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/admin/store', [AdminController::class, 'storeAdmin'])->name('admin.store');
+    Route::get('/pemeliharaan/rutin', [PemeliharaanController::class, 'rutin'])->name('pemeliharaan.rutin');
+    Route::get('/pemeliharaan/darurat', [PemeliharaanController::class, 'darurat'])->name('pemeliharaan.darurat');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
 });
 
 require __DIR__.'/auth.php';
