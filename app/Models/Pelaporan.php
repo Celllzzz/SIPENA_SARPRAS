@@ -22,4 +22,9 @@ class Pelaporan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(LogAktivitas::class)->latest();
+    }
 }

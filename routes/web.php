@@ -28,19 +28,27 @@ Route::middleware('auth')->group(function () {
 
     //Halaman Laporan
     Route::get('/data-pelaporan', [PelaporanController::class, 'index'])->name('pelaporan.index');
+
+    Route::get('/pelaporan/{pelaporan}', [PelaporanController::class, 'show'])->name('pelaporan.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/tindak-lanjut', [TindakLanjutController::class, 'index'])->name('tindak-lanjut.index');
     Route::get('/tindak-lanjut/{id}/edit', [TindakLanjutController::class, 'edit'])->name('tindak-lanjut.edit');
     Route::put('/tindak-lanjut/{id}', [TindakLanjutController::class, 'update'])->name('tindak-lanjut.update');
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-    Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
-    Route::post('/admin/store', [AdminController::class, 'storeAdmin'])->name('admin.store');
     Route::get('/pemeliharaan/rutin', [PemeliharaanController::class, 'rutin'])->name('pemeliharaan.rutin');
     Route::get('/pemeliharaan/darurat', [PemeliharaanController::class, 'darurat'])->name('pemeliharaan.darurat');
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
     Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
+    Route::post('/admin/store', [AdminController::class, 'storeAdmin'])->name('admin.store');
+    Route::get('/admin/{admin}/edit', [AdminController::class, 'edit'])->name('admin.edit');
+    Route::put('/admin/{admin}', [AdminController::class, 'update'])->name('admin.update');
+    Route::delete('/admin/{admin}', [AdminController::class, 'destroy'])->name('admin.destroy');
+    Route::get('/admin/{admin}/change-password', [AdminController::class, 'showChangePasswordForm'])->name('admin.change_password_form');
+    Route::put('/admin/{admin}/change-password', [AdminController::class, 'updatePassword'])->name('admin.change_password_update');
+
 });
 
 require __DIR__.'/auth.php';

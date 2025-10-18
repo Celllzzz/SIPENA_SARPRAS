@@ -1,66 +1,96 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Daftar Admin') }}
+            {{ __('Kelola Akun Admin') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-6xl mx-auto">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 sm:p-6 text-gray-900">
 
-            {{-- Search + Tambah Admin --}}
-            <div class="mb-4 flex items-center gap-2">
-                {{-- Tombol Tambah Admin --}}
-                <a href="{{ route('admin.create') }}"
-                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                    + Tambah Admin
-                </a>
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+                        <a href="{{ route('admin.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                            {{ __('Tambah Admin Baru') }}
+                        </a>
+                        
+                        {{-- Search bar dengan tombol --}}
+                        <form method="GET" action="{{ route('admin.index') }}" class="w-full sm:w-auto">
+                            <div class="relative w-full sm:w-64">
+                                <x-text-input type="text" name="search" class="w-full" placeholder="Cari nama atau email..." value="{{ request('search') }}" />
+                                <x-primary-button class="absolute top-0 right-0 h-full">
+                                    Cari
+                                </x-primary-button>
+                            </div>
+                        </form>
+                    </div>
 
-                {{-- Search Bar --}}
-                <form method="GET" action="{{ route('admin.index') }}" class="flex-1 flex gap-2">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama atau email admin..."
-                        class="w-1/2 border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
-                    <button type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                        Cari
-                    </button>
-                </form>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
-                <table class="min-w-full border border-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 border">Nama</th>
-                            <th class="px-4 py-2 border">Email</th>
-                            <th class="px-4 py-2 border">Tanggal Dibuat</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($admins as $admin)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-2 border">{{ $admin->name }}</td>
-                                <td class="px-4 py-2 border">{{ $admin->email }}</td>
-                                <td class="px-4 py-2 border">
-                                    {{ $admin->created_at->format('d-m-Y H:i') }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-center py-4 text-gray-500">
-                                    Belum ada admin yang terdaftar.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-                {{-- Pagination --}}
-                <div class="mt-4">
-                    {{ $admins->links() }}
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Update Terakhir</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($admins as $admin)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($admins->currentPage() - 1) * $admins->perPage() + $loop->iteration }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $admin->name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $admin->email }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $admin->updated_at->format('d M Y, H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
+                                            <a href="{{ route('admin.edit', $admin->id) }}" class="text-indigo-600 hover:underline">Edit</a>
+                                            <a href="{{ route('admin.change_password_form', $admin->id) }}" class="text-green-600 hover:underline">Ubah Pass</a>
+                                            <button onclick="confirmDelete('{{ $admin->id }}', '{{ $admin->name }}')" class="text-red-600 hover:underline">Hapus</button>
+                                            
+                                            <form id="delete-form-{{ $admin->id }}" action="{{ route('admin.destroy', $admin->id) }}" method="POST" class="hidden">@csrf @method('DELETE')</form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-10 text-center text-gray-500">Tidak ada data admin ditemukan.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4">{{ $admins->links() }}</div>
                 </div>
             </div>
         </div>
     </div>
 </x-app-layout>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id, name) {
+        Swal.fire({
+            title: 'Anda Yakin?',
+            text: `Akun admin "${name}" akan dihapus secara permanen!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true 
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+
+    @if(session('success'))
+        Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session('success') }}', timer: 1500, showConfirmButton: false });
+    @endif
+    @if(session('error'))
+        Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session('error') }}' });
+    @endif
+</script>

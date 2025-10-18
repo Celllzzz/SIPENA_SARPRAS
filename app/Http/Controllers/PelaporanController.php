@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelaporan;
+use App\Models\LogAktivitas;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -77,7 +79,7 @@ class PelaporanController extends Controller
                 $buktiPath = $file->storeAs('buktilaporan', $filename, 'public');
             }
 
-            Pelaporan::create([
+            $pelaporanBaru = Pelaporan::create([
                 'user_id'   => Auth::id(),
                 'sarana'    => $request->sarana,
                 'lokasi'    => $request->lokasi,
@@ -86,19 +88,32 @@ class PelaporanController extends Controller
                 'status'    => 'verifikasi',
             ]);
 
+            LogAktivitas::create([
+                'pelaporan_id' => $pelaporanBaru->id,
+                'user_id'      => Auth::id(),
+                'aktivitas'    => 'Laporan dibuat oleh ' . Auth::user()->name,
+            ]);
+
             return redirect()->route('dashboard')->with('success', 'Laporan berhasil dikirim.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data!');
         }
     }
 
-
     /**
      * Display the specified resource.
      */
     public function show(Pelaporan $pelaporan)
     {
-        //
+        // Pastikan user hanya bisa melihat laporannya sendiri
+        if ($pelaporan->user_id !== Auth::id()) {
+            abort(403);
+        }
+        
+        // Eager load relasi
+        $pelaporan->load(['user', 'logs.user']);
+
+        return view('user.showPelaporan', compact('pelaporan'));
     }
 
     /**

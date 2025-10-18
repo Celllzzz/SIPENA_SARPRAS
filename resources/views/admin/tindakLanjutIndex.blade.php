@@ -120,7 +120,7 @@
         });
     }
 
-    // [BARU] Script untuk menampilkan notifikasi sukses
+    // Script untuk menampilkan notifikasi sukses
     @if(session('success'))
         Swal.fire({
             icon: 'success',

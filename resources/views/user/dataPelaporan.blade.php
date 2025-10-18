@@ -39,42 +39,18 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sarana & Lokasi</th>
-                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Bukti</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update Terakhir</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($pelaporans as $laporan)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ ($pelaporans->currentPage() - 1) * $pelaporans->perPage() + $loop->iteration }}
-                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($pelaporans->currentPage() - 1) * $pelaporans->perPage() + $loop->iteration }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             <div class="font-medium text-gray-900">{{ $laporan->sarana }}</div>
                                             <div class="text-gray-500">{{ $laporan->lokasi }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                            @if ($laporan->bukti)
-                                                @php
-                                                    $fileExtension = strtolower(pathinfo($laporan->bukti, PATHINFO_EXTENSION));
-                                                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-                                                @endphp
-
-                                                @if (in_array($fileExtension, $imageExtensions))
-                                                    <img src="{{ asset('storage/' . $laporan->bukti) }}" alt="Bukti" class="h-12 w-12 object-cover rounded-md mx-auto transform transition-transform duration-300 hover:scale-150 cursor-pointer" onclick="showImageModal(`{{ asset('storage/' . $laporan->bukti) }}`)">
-                                                @else
-                                                    <a href="{{ asset('storage/' . $laporan->bukti) }}" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 hover:underline">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        <span class="text-sm">Lihat File</span>
-                                                    </a>
-                                                @endif
-                                            @else
-                                                <span class="text-gray-400 italic text-xs">N/A</span>
-                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -84,19 +60,16 @@
                                                 {{ str_replace('_', ' ', ucfirst($laporan->status)) }}
                                             </span>
                                         </td>
-                                        {{-- [PERUBAHAN DI SINI] --}}
-                                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
-                                            <p class="line-clamp-3">
-                                                {{ $laporan->catatan ?? '-' }}
-                                            </p>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $laporan->updated_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->updated_at->format('d M Y, H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                            <a href="{{ route('pelaporan.show', $laporan->id) }}" class="text-indigo-600 hover:underline">
+                                                Detail
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+                                        <td colspan="5" class="px-6 py-10 text-center text-gray-500">
                                             Tidak ada data laporan yang ditemukan.
                                         </td>
                                     </tr>
@@ -113,15 +86,3 @@
         </div>
     </div>
 </x-app-layout>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function showImageModal(imageUrl) {
-        Swal.fire({
-            imageUrl: imageUrl,
-            imageWidth: '90%',
-            imageAlt: 'Bukti Laporan',
-            confirmButtonText: 'Tutup'
-        });
-    }
-</script>
