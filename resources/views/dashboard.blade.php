@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Pesan Selamat Datang --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
                     <span>Selamat datang kembali, </span><strong>{{ Auth::user()->name }}</strong>!
@@ -19,7 +18,6 @@
                 {{-- TAMPILAN DASHBOARD UNTUK ADMIN --}}
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    {{-- Kartu ini sudah responsif, ukurannya akan menyesuaikan grid --}}
                     <div class="bg-gray-700 text-white p-5 rounded-lg shadow-md">
                         <h3 class="text-xl sm:text-2xl font-bold">{{ $totalLaporan }}</h3>
                         <p class="mt-1 text-sm sm:text-base">Total Laporan</p>
@@ -42,7 +40,6 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Menu Utama</h3>
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         
-                        {{-- Tombol-tombol ini juga sudah responsif karena berada di dalam grid --}}
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="w-full h-full bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center focus:outline-none text-sm sm:text-base">
                                 Laporan Kerusakan
@@ -100,7 +97,7 @@
                                 @forelse ($laporanTerbaru as $laporan)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $loop->iteration }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d-m-Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $laporan->sarana }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->lokasi }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -129,8 +126,7 @@
                 {{-- TAMPILAN DASHBOARD UNTUK USER BIASA --}}
                 
                 <div class="mb-6">
-                    <a href="{{ route('pelaporan.create') }}" 
-                    class="inline-flex items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
+                    <a href="{{ route('pelaporan.create') }}" class="inline-flex items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
                         <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
@@ -158,7 +154,7 @@
                                 @forelse ($laporanUser as $laporan)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $loop->iteration }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d-m-Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d M Y') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $laporan->sarana }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->lokasi }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -188,3 +184,27 @@
         </div>
     </div>
 </x-app-layout>
+
+{{-- [BARU] Script SweetAlert untuk menangkap pesan session --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        timer: 1500, 
+        showConfirmButton: false
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '{{ session('error') }}'
+    });
+</script>
+@endif

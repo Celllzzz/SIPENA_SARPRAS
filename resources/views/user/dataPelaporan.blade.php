@@ -1,152 +1,113 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Data Pelaporan') }}
+            {{ __('Data Pelaporan Kerusakan') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-6xl mx-auto">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 sm:p-6 text-gray-900">
 
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-                {{-- Dropdown entries --}}
-                <div>
-                    <form method="GET" action="{{ route('pelaporan.index') }}" class="flex items-center gap-2">
-                        <label for="per_page" class="text-sm text-gray-600">Show</label>
-                        <select name="per_page" id="per_page" onchange="this.form.submit()"
-                                class="border border-gray-300 rounded px-3 py-1 text-sm w-20">
-                            @foreach([10,25,50,100] as $size)
-                                <option value="{{ $size }}" {{ request('per_page', 10) == $size ? 'selected' : '' }}>
-                                    {{ $size }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="text-sm text-gray-600">entries</span>
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+                        <form method="GET" action="{{ route('pelaporan.index') }}" class="flex items-center text-sm">
+                            <label for="per_page" class="mr-2 text-gray-600">Tampilkan</label>
+                            <select name="per_page" id="per_page" onchange="this.form.submit()" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm">
+                                @foreach([10, 25, 50, 100] as $size)
+                                    <option value="{{ $size }}" {{ request('per_page', 10) == $size ? 'selected' : '' }}>{{ $size }}</option>
+                                @endforeach
+                            </select>
+                            <span class="ml-2 text-gray-600">data</span>
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        </form>
 
-                        {{-- biar search tetap nyangkut --}}
-                        <input type="hidden" name="search" value="{{ request('search') }}">
-                    </form>
-                </div>
+                        <form method="GET" action="{{ route('pelaporan.index') }}" class="w-full sm:w-auto">
+                            <div class="relative w-full sm:w-64">
+                                <x-text-input type="text" name="search" class="w-full" placeholder="Cari laporan..." value="{{ request('search') }}" />
+                                <x-primary-button class="absolute top-0 right-0 h-full">
+                                    Cari
+                                </x-primary-button>
+                            </div>
+                            <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                        </form>
+                    </div>
 
-                {{-- Search bar --}}
-                <form method="GET" action="{{ route('pelaporan.index') }}" class="flex gap-2 w-full sm:w-auto">
-                    <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari..."
-                        class="w-full sm:w-64 border border-gray-300 rounded px-3 py-2 text-sm focus:ring focus:ring-blue-200">
-                    <button type="submit"
-                            class="px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
-                        Cari
-                    </button>
-                </form>
-            </div>
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sarana & Lokasi</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Bukti</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update Terakhir</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse ($pelaporans as $laporan)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ ($pelaporans->currentPage() - 1) * $pelaporans->perPage() + $loop->iteration }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <div class="font-medium text-gray-900">{{ $laporan->sarana }}</div>
+                                            <div class="text-gray-500">{{ $laporan->lokasi }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            @if ($laporan->bukti)
+                                                @php
+                                                    $fileExtension = strtolower(pathinfo($laporan->bukti, PATHINFO_EXTENSION));
+                                                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                                                @endphp
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
-                <table class="w-full border border-gray-200 table-auto">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 border">No</th>
-                            <th class="px-4 py-2 border">Nama Sarana</th>
-                            <th class="px-4 py-2 border">Lokasi</th>
-                            <th class="px-4 py-2 border">Bukti</th>
-                            <th class="px-4 py-2 border">Status</th>
-                            <th class="px-4 py-2 border">Catatan</th>
-                            <th class="px-4 py-2 border">Last Update</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($pelaporans as $p)
-                            <tr class="hover:bg-gray-50">
-                                {{-- Kolom Nomor --}}
-                                <td class="px-4 py-2 border text-center">
-                                    {{ ($pelaporans->currentPage() - 1) * $pelaporans->perPage() + $loop->iteration }}
-                                </td>
-
-                                <td class="px-4 py-2 border whitespace-nowrap">{{ $p->sarana }}</td>
-                                <td class="px-4 py-2 border whitespace-nowrap">{{ $p->lokasi }}</td>
-                                <td class="px-4 py-2 border">
-                                    @if ($p->bukti)
-                                        @if (Str::endsWith($p->bukti, ['jpg','jpeg','png']))
-                                            <img src="{{ asset('storage/' . $p->bukti) }}" 
-                                                alt="Bukti" 
-                                                class="h-16 w-16 object-cover rounded-md transform transition-transform duration-300 hover:scale-150">
-                                        @else
-                                            <a href="{{ asset('storage/' . $p->bukti) }}" 
-                                                target="_blank" 
-                                                class="text-blue-600 underline">
-                                                Lihat File
-                                            </a>
-                                        @endif
-                                    @else
-                                        <span class="text-gray-500 italic">Tidak ada</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2 border">
-                                    @if ($p->status === 'verifikasi')
-                                        <span class="px-2 py-1 rounded text-white bg-blue-600">
-                                            Verifikasi
-                                        </span>
-                                    @elseif ($p->status === 'dalam_perbaikan')
-                                        <span class="px-2 py-1 rounded text-white bg-yellow-500">
-                                            Dalam Perbaikan
-                                        </span>
-                                    @elseif ($p->status === 'selesai')
-                                        <span class="px-2 py-1 rounded text-white bg-green-600">
-                                            Selesai
-                                        </span>
-                                    @else
-                                        <span class="px-2 py-1 rounded text-white bg-gray-500">
-                                            {{ $p->status }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2 border max-w-xs break-words whitespace-normal">
-                                    @if($p->catatan)
-                                        {{-- Desktop: selalu tampil full --}}
-                                        <span class="hidden sm:block">
-                                            {{ $p->catatan }}
-                                        </span>
-
-                                        {{-- Mobile: potong teks + tombol --}}
-                                        <span class="block sm:hidden">
-                                            @php
-                                                $limit = 50; // batas karakter
-                                                $isLong = strlen($p->catatan) > $limit;
-                                            @endphp
-
-                                            @if($isLong)
-                                                <span class="truncate block">
-                                                    {{ Str::limit($p->catatan, $limit) }}
-                                                </span>
-                                                <button type="button"
-                                                        class="text-blue-600 underline text-sm mt-1"
-                                                        onclick="showFullCatatan(`{{ $p->catatan }}`)">
-                                                    Lihat Catatan
-                                                </button>
+                                                @if (in_array($fileExtension, $imageExtensions))
+                                                    <img src="{{ asset('storage/' . $laporan->bukti) }}" alt="Bukti" class="h-12 w-12 object-cover rounded-md mx-auto transform transition-transform duration-300 hover:scale-150 cursor-pointer" onclick="showImageModal(`{{ asset('storage/' . $laporan->bukti) }}`)">
+                                                @else
+                                                    <a href="{{ asset('storage/' . $laporan->bukti) }}" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 hover:underline">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="text-sm">Lihat File</span>
+                                                    </a>
+                                                @endif
                                             @else
-                                                {{ $p->catatan }}
+                                                <span class="text-gray-400 italic text-xs">N/A</span>
                                             @endif
-                                        </span>
-                                    @else
-                                        <span class="text-gray-500 italic">-</span>
-                                    @endif
-                                </td>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                @if($laporan->status == 'verifikasi') bg-yellow-100 text-yellow-800 @endif
+                                                @if($laporan->status == 'dalam_perbaikan') bg-blue-100 text-blue-800 @endif
+                                                @if($laporan->status == 'selesai') bg-green-100 text-green-800 @endif">
+                                                {{ str_replace('_', ' ', ucfirst($laporan->status)) }}
+                                            </span>
+                                        </td>
+                                        {{-- [PERUBAHAN DI SINI] --}}
+                                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
+                                            <p class="line-clamp-3">
+                                                {{ $laporan->catatan ?? '-' }}
+                                            </p>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $laporan->updated_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-10 text-center text-gray-500">
+                                            Tidak ada data laporan yang ditemukan.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                                <td class="px-4 py-2 border whitespace-nowrap">{{ $p->updated_at->timezone('Asia/Makassar')->format('d-m-Y H:i') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-gray-500">
-                                    Belum ada data pelaporan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-
-                {{-- Pagination --}}
-                <div class="mt-4">
-                    {{ $pelaporans->links() }}
+                    <div class="mt-4">
+                        {{ $pelaporans->links() }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,13 +116,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function showFullCatatan(catatan) {
+    function showImageModal(imageUrl) {
         Swal.fire({
-            title: 'Catatan Perbaikan',
-            text: catatan,
-            icon: 'info',
-            confirmButtonText: 'Tutup',
-            width: '600px'
+            imageUrl: imageUrl,
+            imageWidth: '90%',
+            imageAlt: 'Bukti Laporan',
+            confirmButtonText: 'Tutup'
         });
     }
 </script>

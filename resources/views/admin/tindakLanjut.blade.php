@@ -1,90 +1,115 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tindak Lanjut Laporan') }}
+            {{ __('Tindak Lanjut Laporan Kerusakan') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 sm:p-8 text-gray-900">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-            {{-- Search Bar --}}
-            <form method="GET" action="{{ route('tindak-lanjut.index') }}" class="mb-4 flex gap-2">
-                <input type="text" name="search" value="{{ request('search') }}"
-                       placeholder="Cari nama pelapor, sarana, lokasi, status..."
-                       class="w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200">
-                <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Cari
-                </button>
-            </form>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-1">Detail Laporan</h3>
+                            <p class="text-sm text-gray-600 mb-6">Informasi yang dilaporkan oleh pengguna.</p>
+                            
+                            {{-- ... (Isi detail laporan tidak berubah) ... --}}
+                            <div class="space-y-4">
+                                <div>
+                                    <x-input-label :value="__('Nama Pelapor')" />
+                                    <x-text-input class="block mt-1 w-full bg-gray-100" type="text" :value="$pelaporan->user->name ?? '-'" disabled />
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Nama Sarana')" />
+                                    <x-text-input class="block mt-1 w-full bg-gray-100" type="text" :value="$pelaporan->sarana" disabled />
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Lokasi')" />
+                                    <x-text-input class="block mt-1 w-full bg-gray-100" type="text" :value="$pelaporan->lokasi" disabled />
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Deskripsi Kerusakan')" />
+                                    <textarea class="block mt-1 w-full border-gray-300 rounded-md shadow-sm bg-gray-100" disabled rows="4">{{ $pelaporan->deskripsi }}</textarea>
+                                </div>
+                                <div>
+                                    <x-input-label :value="__('Bukti')" />
+                                    @if ($pelaporan->bukti)
+                                        @php
+                                            $fileExtension = strtolower(pathinfo($pelaporan->bukti, PATHINFO_EXTENSION));
+                                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+                                        @endphp
 
-            <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
-                <table class="min-w-full border border-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2 border">Nama Pelapor</th>
-                            <th class="px-4 py-2 border">Nama Sarana</th>
-                            <th class="px-4 py-2 border">Lokasi</th>
-                            <th class="px-4 py-2 border">Deskripsi</th>
-                            <th class="px-4 py-2 border">Bukti</th>
-                            <th class="px-4 py-2 border">Status</th>
-                            <th class="px-4 py-2 border">Catatan</th>
-                            <th class="px-4 py-2 border">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($pelaporans as $p)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-2 border">{{ $p->user->name ?? '-' }}</td>
-                                <td class="px-4 py-2 border">{{ $p->sarana }}</td>
-                                <td class="px-4 py-2 border">{{ $p->lokasi }}</td>
-                                <td class="px-4 py-2 border">{{ $p->deskripsi }}</td>
-                                <td class="px-4 py-2 border">
-                                    @if ($p->bukti)
-                                        @if (Str::endsWith($p->bukti, ['jpg','jpeg','png']))
-                                            <img src="{{ asset('storage/' . $p->bukti) }}" 
-                                                 alt="Bukti" class="h-16 rounded">
+                                        @if (in_array($fileExtension, $imageExtensions))
+                                            <img src="{{ asset('storage/' . $pelaporan->bukti) }}" alt="Bukti" class="mt-1 w-full max-w-sm h-auto object-cover rounded-md cursor-pointer" onclick="showImageModal(`{{ asset('storage/' . $pelaporan->bukti) }}`)">
                                         @else
-                                            <a href="{{ asset('storage/' . $p->bukti) }}" 
-                                               target="_blank" class="text-blue-600 underline">
-                                                Lihat File
+                                            <a href="{{ asset('storage/' . $pelaporan->bukti) }}" target="_blank" class="mt-1 inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                                                <span>Lihat File Bukti</span>
                                             </a>
                                         @endif
                                     @else
-                                        <span class="text-gray-500 italic">Tidak ada</span>
+                                        <p class="mt-1 text-sm text-gray-500 italic">Tidak ada bukti yang dilampirkan.</p>
                                     @endif
-                                </td>
-                                <td class="px-4 py-2 border">
-                                    <span class="px-2 py-1 rounded text-white
-                                        {{ $p->status == 'Selesai' ? 'bg-green-600' : 
-                                           ($p->status == 'Proses' ? 'bg-yellow-500' : 'bg-red-600') }}">
-                                        {{ $p->status }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-2 border">{{ $p->catatan ?? '-' }}</td>
-                                <td class="px-4 py-2 border text-center">
-                                    <a href="{{ route('tindak-lanjut.edit', $p->id) }}"
-                                       class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700">
-                                        Tindak Lanjut
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-4 text-gray-500">
-                                    Belum ada data pelaporan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                        </div>
 
-                {{-- Pagination --}}
-                <div class="mt-4">
-                    {{ $pelaporans->links() }}
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-1">Form Tindak Lanjut</h3>
+                            <p class="text-sm text-gray-600 mb-6">Update status, biaya, dan berikan catatan perbaikan.</p>
+
+                            <form action="{{ route('tindak-lanjut.update', $pelaporan->id) }}" method="POST" class="space-y-6">
+                                @csrf
+                                @method('PUT')
+
+                                <div>
+                                    <x-input-label for="status" :value="__('Ubah Status Laporan')" />
+                                    <select id="status" name="status" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <option value="verifikasi" @selected($pelaporan->status == 'verifikasi')>Verifikasi</option>
+                                        <option value="dalam_perbaikan" @selected($pelaporan->status == 'dalam_perbaikan')>Dalam Perbaikan</option>
+                                        <option value="selesai" @selected($pelaporan->status == 'selesai')>Selesai</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <x-input-label for="biaya" :value="__('Biaya Perbaikan (Rp)')" />
+                                    <x-text-input id="biaya" class="block mt-1 w-full" type="number" name="biaya" :value="old('biaya', $pelaporan->biaya_perbaikan)" placeholder="Contoh: 50000" />
+                                </div>
+
+                                <div>
+                                    <x-input-label for="catatan" :value="__('Catatan Perbaikan')" />
+                                    <textarea id="catatan" name="catatan" rows="4" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" placeholder="Jelaskan tindakan yang telah dilakukan...">{{ old('catatan', $pelaporan->catatan) }}</textarea>
+                                </div>
+
+                                <div class="flex items-center justify-end gap-4 pt-4">
+                                    <a href="{{ route('tindak-lanjut.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                        {{ __('Kembali') }}
+                                    </a>
+
+                                    <x-primary-button>
+                                        {{ __('Update Laporan') }}
+                                    </x-primary-button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </x-app-layout>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function showImageModal(imageUrl) {
+        Swal.fire({
+            imageUrl: imageUrl,
+            imageWidth: '90%',
+            imageAlt: 'Bukti Laporan',
+            confirmButtonText: 'Tutup'
+        });
+    }
+</script>
