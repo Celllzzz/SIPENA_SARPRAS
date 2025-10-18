@@ -43,7 +43,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($admins->currentPage() - 1) * $admins->perPage() + $loop->iteration }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $admin->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $admin->email }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $admin->updated_at->format('d M Y, H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $admin->updated_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center space-x-2">
                                             <a href="{{ route('admin.edit', $admin->id) }}" class="text-indigo-600 hover:underline">Edit</a>
                                             <a href="{{ route('admin.change_password_form', $admin->id) }}" class="text-green-600 hover:underline">Ubah Pass</a>

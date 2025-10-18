@@ -62,7 +62,7 @@
                                         <div class="relative">
                                             <div class="absolute -left-[30px] top-1 h-2.5 w-2.5 rounded-full bg-gray-400 ring-4 ring-white"></div>
                                             <p class="text-sm text-gray-800">{{ $log->aktivitas }}</p>
-                                            <p class="text-xs text-gray-500 mt-1">{{ $log->created_at->format('d M Y, H:i') }}</p>
+                                            <p class="text-xs text-gray-500 mt-1">{{ $log->created_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}</p>
                                         </div>
                                     @empty
                                         <p class="text-sm text-gray-500 italic">Belum ada aktivitas.</p>

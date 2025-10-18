@@ -20,7 +20,7 @@
                             <a href="{{ route('tindak-lanjut.edit', $notifikasi->pelaporan_id) }}"
                                class="block p-4 border rounded-lg hover:bg-gray-50 @if(!$notifikasi->is_read) bg-indigo-50 border-indigo-200 @endif">
                                 <p class="font-medium text-gray-800">{{ $notifikasi->pesan }}</p>
-                                <p class="text-sm text-gray-500 mt-1">{{ $notifikasi->created_at->format('d M Y, H:i') }}</p>
+                                <p class="text-sm text-gray-500 mt-1">{{ $notifikasi->created_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}</p>
                             </a>
                         @empty
                             <p class="text-center text-gray-500">Tidak ada notifikasi.</p>

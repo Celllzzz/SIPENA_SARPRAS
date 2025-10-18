@@ -60,7 +60,7 @@
                                                 {{ str_replace('_', ' ', ucfirst($laporan->status)) }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->updated_at->format('d M Y, H:i') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->updated_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                                             <a href="{{ route('pelaporan.show', $laporan->id) }}" class="text-indigo-600 hover:underline">
                                                 Detail
