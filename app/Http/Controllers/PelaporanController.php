@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pelaporan;
 use App\Models\LogAktivitas;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,10 @@ class PelaporanController extends Controller
     public function index(Request $request)
     {
         $query = Pelaporan::query();
+
+        if (Auth::user()->role !== 'admin') {
+            $query->where('user_id', Auth::id());
+        }
 
         // Filter search
         if ($request->filled('search')) {
@@ -88,6 +93,15 @@ class PelaporanController extends Controller
                 'status'    => 'verifikasi',
             ]);
 
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                Notifikasi::create([
+                    'user_id' => $admin->id,
+                    'pelaporan_id' => $pelaporanBaru->id,
+                    'pesan' => 'Laporan baru untuk ' . $pelaporanBaru->sarana . ' dari ' . Auth::user()->name,
+                ]);
+            }
+
             LogAktivitas::create([
                 'pelaporan_id' => $pelaporanBaru->id,
                 'user_id'      => Auth::id(),
@@ -106,8 +120,8 @@ class PelaporanController extends Controller
     public function show(Pelaporan $pelaporan)
     {
         // Pastikan user hanya bisa melihat laporannya sendiri
-        if ($pelaporan->user_id !== Auth::id()) {
-            abort(403);
+        if (Auth::user()->role !== 'admin' && $pelaporan->user_id !== Auth::id()) {
+            abort(403, 'AKSES DITOLAK');
         }
         
         // Eager load relasi

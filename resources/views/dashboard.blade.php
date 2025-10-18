@@ -68,10 +68,6 @@
                         <a href="{{ route('admin.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
                             Kelola Admin
                         </a>
-
-                        <a href="{{ route('notifikasi.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
-                            Notifikasi
-                        </a>
                     
                         <a href="{{ route('ekspor.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
                             Ekspor PDF
@@ -185,7 +181,7 @@
     </div>
 </x-app-layout>
 
-{{-- [BARU] Script SweetAlert untuk menangkap pesan session --}}
+{{-- Script SweetAlert untuk menangkap pesan session --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('success'))
 <script>

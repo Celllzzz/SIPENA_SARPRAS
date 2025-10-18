@@ -38,7 +38,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/tindak-lanjut/{id}', [TindakLanjutController::class, 'update'])->name('tindak-lanjut.update');
     Route::get('/pemeliharaan/rutin', [PemeliharaanController::class, 'rutin'])->name('pemeliharaan.rutin');
     Route::get('/pemeliharaan/darurat', [PemeliharaanController::class, 'darurat'])->name('pemeliharaan.darurat');
-    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
     Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
@@ -48,6 +47,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/admin/{admin}', [AdminController::class, 'destroy'])->name('admin.destroy');
     Route::get('/admin/{admin}/change-password', [AdminController::class, 'showChangePasswordForm'])->name('admin.change_password_form');
     Route::put('/admin/{admin}/change-password', [AdminController::class, 'updatePassword'])->name('admin.change_password_update');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/mark-all-read', [NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.markAllAsRead');
 
 });
 
