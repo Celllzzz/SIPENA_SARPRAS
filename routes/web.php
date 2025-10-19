@@ -5,6 +5,8 @@ use App\Http\Controllers\PelaporanController;
 use App\Http\Controllers\TindakLanjutController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\PemeliharaanController;
+use App\Http\Controllers\PemeliharaanRutinController;
+use App\Http\Controllers\CatatanPemeliharaanController;
 use App\Http\Controllers\NotifikasiController; 
 use App\Http\Controllers\EksporController;
 use App\Http\Controllers\DashboardController;     
@@ -36,8 +38,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/tindak-lanjut', [TindakLanjutController::class, 'index'])->name('tindak-lanjut.index');
     Route::get('/tindak-lanjut/{id}/edit', [TindakLanjutController::class, 'edit'])->name('tindak-lanjut.edit');
     Route::put('/tindak-lanjut/{id}', [TindakLanjutController::class, 'update'])->name('tindak-lanjut.update');
-    Route::get('/pemeliharaan/rutin', [PemeliharaanController::class, 'rutin'])->name('pemeliharaan.rutin');
+
+    Route::resource('pemeliharaan-rutin', PemeliharaanRutinController::class);
+    Route::post('catatan-pemeliharaan', [CatatanPemeliharaanController::class, 'store'])->name('catatan-pemeliharaan.store');
+
     Route::get('/pemeliharaan/darurat', [PemeliharaanController::class, 'darurat'])->name('pemeliharaan.darurat');
+
     Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
