@@ -88,7 +88,7 @@
     }
 
     @if(session('success'))
-        Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session('success') }}', timer: 1500, showConfirmButton: false });
+        Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session('success') }}', timer: 1500, showConfirmButton: true });
     @endif
     @if(session('error'))
         Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session('error') }}' });

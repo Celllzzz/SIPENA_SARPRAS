@@ -60,7 +60,7 @@
                             <div x-show="open" @click.away="open = false" x-transition class="absolute z-10 mt-2 w-full min-w-max rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5" style="display: none;">
                                 <div class="py-1">
                                     <a href="{{ route('pemeliharaan-rutin.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pemeliharaan Rutin</a>
-                                    <a href="{{ route('pemeliharaan.darurat') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pemeliharaan Darurat</a>
+                                    <a href="{{ route('pemeliharaan-darurat.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pemeliharaan Darurat</a>
                                 </div>
                             </div>
                         </div>

@@ -40,7 +40,7 @@
                                 </x-slot>
                                 <x-slot name="content">
                                     <x-dropdown-link :href="route('pemeliharaan-rutin.index')">{{ __('Pemeliharaan Rutin') }}</x-dropdown-link>
-                                    <x-dropdown-link :href="route('pemeliharaan.darurat')">{{ __('Pemeliharaan Darurat') }}</x-dropdown-link>
+                                    <x-dropdown-link :href="route('pemeliharaan-darurat.index')">{{ __('Pemeliharaan Darurat') }}</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
@@ -153,7 +153,7 @@
                     </button>
                     <div x-show="dropdownOpen" x-transition class="mt-2 space-y-1 ps-4">
                         <x-responsive-nav-link :href="route('pemeliharaan-rutin.index')">{{ __('Pemeliharaan Rutin') }}</x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('pemeliharaan.darurat')">{{ __('Pemeliharaan Darurat') }}</x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('pemeliharaan-darurat.index')">{{ __('Pemeliharaan Darurat') }}</x-responsive-nav-link>
                     </div>
                 </div>
 

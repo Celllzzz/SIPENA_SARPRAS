@@ -126,7 +126,7 @@
             icon: 'success',
             title: 'Berhasil!',
             text: '{{ session('success') }}',
-            timer: 2500,
+            timer: 1500,
             showConfirmButton: true
         });
     @endif

@@ -4,8 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PelaporanController;
 use App\Http\Controllers\TindakLanjutController;
 use App\Http\Controllers\Auth\AdminController;
-use App\Http\Controllers\PemeliharaanController;
 use App\Http\Controllers\PemeliharaanRutinController;
+use App\Http\Controllers\PemeliharaanDaruratController;
 use App\Http\Controllers\CatatanPemeliharaanController;
 use App\Http\Controllers\NotifikasiController; 
 use App\Http\Controllers\EksporController;
@@ -42,7 +42,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('pemeliharaan-rutin', PemeliharaanRutinController::class);
     Route::post('catatan-pemeliharaan', [CatatanPemeliharaanController::class, 'store'])->name('catatan-pemeliharaan.store');
 
-    Route::get('/pemeliharaan/darurat', [PemeliharaanController::class, 'darurat'])->name('pemeliharaan.darurat');
+    Route::resource('pemeliharaan-darurat', PemeliharaanDaruratController::class);
 
     Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
