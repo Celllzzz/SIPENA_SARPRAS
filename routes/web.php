@@ -44,7 +44,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('pemeliharaan-darurat', PemeliharaanDaruratController::class);
 
-    Route::get('/ekspor-pdf', [EksporController::class, 'index'])->name('ekspor.index');
+    Route::get('/ekspor', [EksporController::class, 'index'])->name('ekspor.index');
+    Route::post('/ekspor', [EksporController::class, 'export'])->name('ekspor.export');
+    
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
     Route::post('/admin/store', [AdminController::class, 'storeAdmin'])->name('admin.store');
