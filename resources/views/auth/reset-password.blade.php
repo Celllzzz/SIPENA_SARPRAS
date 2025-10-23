@@ -1,4 +1,8 @@
 <x-guest-layout>
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">
+        {{ __('Atur Ulang Password?') }}
+    </h2>
+
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 

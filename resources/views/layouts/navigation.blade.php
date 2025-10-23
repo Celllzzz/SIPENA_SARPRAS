@@ -49,7 +49,7 @@
                             {{ __('Kelola Admin') }}
                         </x-nav-link>
                         <x-nav-link :href="route('ekspor.index')" :active="request()->routeIs('ekspor.index')">
-                            {{ __('Ekspor PDF') }}
+                            {{ __('Ekspor Laporan') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -161,7 +161,7 @@
                     {{ __('Kelola Admin') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('ekspor.index')" :active="request()->routeIs('ekspor.index')">
-                    {{ __('Ekspor PDF') }}
+                    {{ __('Ekspor Laporan') }}
                 </x-responsive-nav-link>
             @endif
         </div>

@@ -8,6 +8,7 @@ use App\Models\PemeliharaanRutin;
 use App\Models\PemeliharaanDarurat;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 use App\Exports\LaporanKerusakanExport;
 use App\Exports\PemeliharaanRutinExport;
 use App\Exports\PemeliharaanDaruratExport;
@@ -32,7 +33,11 @@ class EksporController extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $format = $request->format;
-        $filename = "{$reportType}_{$startDate}_sampai_{$endDate}";
+
+        $startDateFormatted = Carbon::parse($startDate)->format('d-m-Y'); // Format d-m-y
+        $endDateFormatted = Carbon::parse($endDate)->format('d-m-Y');
+
+        $filename = "{$reportType}_{$startDateFormatted}_sampai_{$endDateFormatted}";
 
         $data = null;
         $exportClass = null;

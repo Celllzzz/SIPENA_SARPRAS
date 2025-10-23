@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('SIPENA-Sarpras') }}
         </h2>
     </x-slot>
 
@@ -70,7 +70,7 @@
                         </a>
                     
                         <a href="{{ route('ekspor.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
-                            Ekspor PDF
+                            Ekspor Laporan
                         </a>
                     </div>
                 </div>

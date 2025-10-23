@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Style\Alignment; 
+use PhpOffice\PhpSpreadsheet\Style\Font; 
 
 class PemeliharaanRutinExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, WithColumnWidths, WithTitle
 {
@@ -46,12 +48,16 @@ class PemeliharaanRutinExport implements FromCollection, WithHeadings, WithMappi
     {
         $this->rowNumber++;
         $catatanTerakhir = $row->catatans->first();
+
+        // Format Tanggal (Zona Waktu Makassar/WITA UTC+8)
+        $tglBerikutnyaFormatted = Carbon::parse($row->tanggal_berikutnya)->setTimezone('Asia/Makassar')->format('d-m-Y');
+
         return [
             $this->rowNumber,
             $row->sarana,
             $row->lokasi,
             $row->frekuensi,
-            \Carbon\Carbon::parse($row->tanggal_berikutnya)->format('d-m-Y'),
+            $tglBerikutnyaFormatted, // <-- DIPERBARUI
             $row->status,
             $catatanTerakhir ? ($catatanTerakhir->isi . ' (oleh ' . $catatanTerakhir->user->name . ')') : '-',
         ];
@@ -64,7 +70,8 @@ class PemeliharaanRutinExport implements FromCollection, WithHeadings, WithMappi
 
     public function styles(Worksheet $sheet)
     {
-        return [ 4 => ['font' => ['bold' => true]] ];
+        // Styling header tabel dipindah ke registerEvents
+        return [];
     }
 
     public function registerEvents(): array
@@ -79,14 +86,23 @@ class PemeliharaanRutinExport implements FromCollection, WithHeadings, WithMappi
                 $sheet->setCellValue('A1', 'Rekap Jadwal Pemeliharaan Rutin');
                 $sheet->setCellValue('A2', 'Periode Jadwal: ' . Carbon::parse($this->startDate)->format('d M Y') . ' s/d ' . Carbon::parse($this->endDate)->format('d M Y'));
 
-                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
-                $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                // Styling Judul Utama
+                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(18); // <-- DIPERBESAR
+                $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+                // Styling Header Tabel (Baris ke-4) <-- DITAMBAHKAN
+                $headerRange = 'A4:G4';
+                $sheet->getStyle($headerRange)->getFont()->setBold(true)->setSize(12);
+                $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+                $sheet->getRowDimension('4')->setRowHeight(25); // Opsional
+
+                // Tambahkan Border (dimulai dari A4)
                 $highestRow = $sheet->getHighestRow();
                 $cellRange = 'A4:G' . $highestRow;
                 $sheet->getStyle($cellRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 
-                $sheet->getStyle('G5:G'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+                // Text Wrapping (dimulai dari baris 5)
+                $sheet->getStyle('G5:G'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
                 
                 $sheet->getColumnDimension('B')->setAutoSize(true);
                 $sheet->getColumnDimension('C')->setAutoSize(true);

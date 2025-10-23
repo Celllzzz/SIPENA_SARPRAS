@@ -1,4 +1,8 @@
 <x-guest-layout>
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">
+        {{ __('Konfirmasi Password?') }}
+    </h2>
+    
     <div class="mb-4 text-sm text-gray-600">
         {{ __('Ini adalah area aman dari aplikasi. Mohon konfirmasi kata sandi Anda sebelum melanjutkan.') }}
     </div>

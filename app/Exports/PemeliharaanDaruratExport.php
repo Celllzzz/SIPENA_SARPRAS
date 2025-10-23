@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Style\Alignment; // <-- DITAMBAHKAN
+use PhpOffice\PhpSpreadsheet\Style\Font; // <-- DITAMBAHKAN
 
 class PemeliharaanDaruratExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, WithColumnWidths, WithTitle
 {
@@ -48,15 +50,23 @@ class PemeliharaanDaruratExport implements FromCollection, WithHeadings, WithMap
     public function map($row): array
     {
         $this->rowNumber++;
+
+        // Format Tanggal (Zona Waktu Makassar/WITA UTC+8)
+        $tglPemeliharaanFormatted = Carbon::parse($row->tanggal_pemeliharaan)->setTimezone('Asia/Makassar')->format('d-m-Y');
+        $tglSeharusnyaFormatted = $row->tanggal_seharusnya ? Carbon::parse($row->tanggal_seharusnya)->setTimezone('Asia/Makassar')->format('d-m-Y') : '-';
+
+        // Format Biaya (50000 -> 50.000)
+        $biayaFormatted = is_numeric($row->biaya) ? number_format($row->biaya, 0, ',', '.') : '-';
+
         return [
             $this->rowNumber,
             $row->sarana,
             $row->lokasi,
-            \Carbon\Carbon::parse($row->tanggal_pemeliharaan)->format('d-m-Y'),
-            $row->tanggal_seharusnya ? \Carbon\Carbon::parse($row->tanggal_seharusnya)->format('d-m-Y') : '-',
+            $tglPemeliharaanFormatted, // <-- DIPERBARUI
+            $tglSeharusnyaFormatted, // <-- DIPERBARUI
             $row->status,
             $row->deskripsi_kerusakan,
-            $row->biaya,
+            $biayaFormatted, // <-- DIPERBARUI
             $row->catatan_perbaikan,
         ];
     }
@@ -68,7 +78,8 @@ class PemeliharaanDaruratExport implements FromCollection, WithHeadings, WithMap
 
     public function styles(Worksheet $sheet)
     {
-        return [ 4 => ['font' => ['bold' => true]] ];
+        // Styling header tabel dipindah ke registerEvents
+        return [];
     }
 
     public function registerEvents(): array
@@ -83,15 +94,24 @@ class PemeliharaanDaruratExport implements FromCollection, WithHeadings, WithMap
                 $sheet->setCellValue('A1', 'Rekap Catatan Pemeliharaan Darurat');
                 $sheet->setCellValue('A2', 'Periode: ' . Carbon::parse($this->startDate)->format('d M Y') . ' s/d ' . Carbon::parse($this->endDate)->format('d M Y'));
 
-                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
-                $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                // Styling Judul Utama
+                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(18); // <-- DIPERBESAR
+                $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+                // Styling Header Tabel (Baris ke-4) <-- DITAMBAHKAN
+                $headerRange = 'A4:I4';
+                $sheet->getStyle($headerRange)->getFont()->setBold(true)->setSize(12);
+                $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+                $sheet->getRowDimension('4')->setRowHeight(25); // Opsional
+
+                // Tambahkan Border (dimulai dari A4)
                 $highestRow = $sheet->getHighestRow();
                 $cellRange = 'A4:I' . $highestRow;
                 $sheet->getStyle($cellRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 
-                $sheet->getStyle('G5:G'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
-                $sheet->getStyle('I5:I'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+                // Text Wrapping (dimulai dari baris 5)
+                $sheet->getStyle('G5:G'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+                $sheet->getStyle('I5:I'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
                 
                 $sheet->getColumnDimension('B')->setAutoSize(true);
                 $sheet->getColumnDimension('C')->setAutoSize(true);
