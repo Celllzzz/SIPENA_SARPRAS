@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Carbon\Carbon;
 
-class LaporanKerusakanExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, WithColumnWidths, WithTitle
+class PemeliharaanDaruratExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, WithColumnWidths, WithTitle
 {
     protected $data;
     protected $startDate;
@@ -26,22 +26,22 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings, WithMappin
         $this->startDate = $startDate;
         $this->endDate = $endDate;
     }
-
+    
     public function collection()
     {
         return $this->data;
     }
-
+    
     public function title(): string
     {
-        return 'Laporan Kerusakan';
+        return 'Pemeliharaan Darurat';
     }
 
     public function headings(): array
     {
         return [
-            'No', 'Nama Pelapor', 'Nama Sarana', 'Lokasi', 'Deskripsi Kerusakan',
-            'Status', 'Terakhir Update', 'Biaya Perbaikan (Rp)', 'Catatan Perbaikan'
+            'No', 'Nama Sarana', 'Lokasi', 'Tgl Pemeliharaan', 'Jadwal Seharusnya',
+            'Status', 'Deskripsi Kerusakan', 'Biaya Perbaikan (Rp)', 'Catatan Perbaikan'
         ];
     }
 
@@ -50,32 +50,25 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings, WithMappin
         $this->rowNumber++;
         return [
             $this->rowNumber,
-            $row->user->name ?? '-',
             $row->sarana,
             $row->lokasi,
-            $row->deskripsi,
+            \Carbon\Carbon::parse($row->tanggal_pemeliharaan)->format('d-m-Y'),
+            $row->tanggal_seharusnya ? \Carbon\Carbon::parse($row->tanggal_seharusnya)->format('d-m-Y') : '-',
             $row->status,
-            $row->updated_at->format('d-m-Y H:i'),
-            $row->biaya_perbaikan,
-            $row->catatan,
+            $row->deskripsi_kerusakan,
+            $row->biaya,
+            $row->catatan_perbaikan,
         ];
     }
 
     public function columnWidths(): array
     {
-        return [
-            'A' => 5,    // No
-            'E' => 50,   // Deskripsi Kerusakan
-            'I' => 50,   // Catatan Perbaikan
-        ];
+        return [ 'A' => 5, 'G' => 50, 'I' => 50 ];
     }
 
     public function styles(Worksheet $sheet)
     {
-        // Header berada di baris ke-4 setelah judul
-        return [
-            4    => ['font' => ['bold' => true]],
-        ];
+        return [ 4 => ['font' => ['bold' => true]] ];
     }
 
     public function registerEvents(): array
@@ -83,34 +76,28 @@ class LaporanKerusakanExport implements FromCollection, WithHeadings, WithMappin
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-
-                // Tambah Judul dan Sub-judul
+                
                 $sheet->insertNewRowBefore(1, 3);
                 $sheet->mergeCells('A1:I1');
                 $sheet->mergeCells('A2:I2');
-                $sheet->setCellValue('A1', 'Rekap Laporan Kerusakan');
+                $sheet->setCellValue('A1', 'Rekap Catatan Pemeliharaan Darurat');
                 $sheet->setCellValue('A2', 'Periode: ' . Carbon::parse($this->startDate)->format('d M Y') . ' s/d ' . Carbon::parse($this->endDate)->format('d M Y'));
 
-                // Styling Judul
                 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
                 $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-                // Tambahkan Border ke seluruh tabel data
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = $sheet->getHighestColumn();
-                $cellRange = 'A4:' . $highestColumn . $highestRow;
+                $cellRange = 'A4:I' . $highestRow;
                 $sheet->getStyle($cellRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 
-                // Text Wrapping untuk kolom deskripsi dan catatan
-                $sheet->getStyle('E5:E'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
+                $sheet->getStyle('G5:G'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
                 $sheet->getStyle('I5:I'.$highestRow)->getAlignment()->setWrapText(true)->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_TOP);
                 
-                // Auto-size untuk kolom lainnya
                 $sheet->getColumnDimension('B')->setAutoSize(true);
                 $sheet->getColumnDimension('C')->setAutoSize(true);
                 $sheet->getColumnDimension('D')->setAutoSize(true);
+                $sheet->getColumnDimension('E')->setAutoSize(true);
                 $sheet->getColumnDimension('F')->setAutoSize(true);
-                $sheet->getColumnDimension('G')->setAutoSize(true);
                 $sheet->getColumnDimension('H')->setAutoSize(true);
             },
         ];

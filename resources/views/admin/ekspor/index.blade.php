@@ -19,6 +19,7 @@
                             <select id="report_type" name="report_type" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="laporan_kerusakan">Laporan Kerusakan</option>
                                 <option value="pemeliharaan_rutin">Jadwal Pemeliharaan Rutin</option>
+                                <option value="pemeliharaan_darurat">Catatan Pemeliharaan Darurat</option>
                             </select>
                         </div>
 

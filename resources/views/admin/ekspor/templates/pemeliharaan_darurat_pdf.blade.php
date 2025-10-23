@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Kerusakan</title>
+    <title>Laporan Pemeliharaan Darurat</title>
     <style>
         @page { size: landscape; }
         body { font-family: 'Helvetica', sans-serif; font-size: 9px; }
@@ -17,19 +17,19 @@
 </head>
 <body>
     <div class="header">
-        <h1>Rekap Laporan Kerusakan</h1>
+        <h1>Rekap Pemeliharaan Darurat</h1>
         <p>Periode: {{ \Carbon\Carbon::parse($startDate)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($endDate)->format('d M Y') }}</p>
     </div>
     <table>
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama Pelapor</th>
                 <th>Nama Sarana</th>
                 <th>Lokasi</th>
-                <th>Deskripsi</th>
+                <th>Tgl Pemeliharaan</th>
+                <th>Jadwal Seharusnya</th>
                 <th>Status</th>
-                <th>Update Terakhir</th>
+                <th>Deskripsi</th>
                 <th>Biaya</th>
                 <th>Catatan</th>
             </tr>
@@ -38,14 +38,14 @@
             @forelse ($data as $item)
             <tr>
                 <td class="text-center">{{ $loop->iteration }}</td>
-                <td>{{ $item->user->name ?? '-' }}</td>
                 <td>{{ $item->sarana }}</td>
                 <td>{{ $item->lokasi }}</td>
-                <td>{{ $item->deskripsi }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_pemeliharaan)->format('d-m-Y') }}</td>
+                <td>{{ $item->tanggal_seharusnya ? \Carbon\Carbon::parse($item->tanggal_seharusnya)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $item->status }}</td>
-                <td>{{ $item->updated_at->format('d-m-Y H:i') }}</td>
-                <td>Rp {{ number_format($item->biaya_perbaikan, 0, ',', '.') }}</td>
-                <td>{{ $item->catatan }}</td>
+                <td>{{ $item->deskripsi_kerusakan }}</td>
+                <td>Rp {{ number_format($item->biaya, 0, ',', '.') }}</td>
+                <td>{{ $item->catatan_perbaikan }}</td>
             </tr>
             @empty
             <tr><td colspan="9" class="text-center">Tidak ada data untuk periode ini.</td></tr>
