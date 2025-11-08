@@ -41,9 +41,9 @@
                                                 $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                                             @endphp
                                             @if (in_array($fileExtension, $imageExtensions))
-                                                <img src="{{ asset('storage/' . $pelaporan->bukti) }}" alt="Bukti" class="mt-1 w-full max-w-sm h-auto object-cover rounded-md cursor-pointer" onclick="showImageModal(`{{ asset('storage/' . $pelaporan->bukti) }}`)">
+                                                <img src="{{ asset($pelaporan->bukti) }}" class="mt-1 w-full max-w-sm h-auto object-cover rounded-md cursor-pointer" onclick="showImageModal(`{{ asset($pelaporan->bukti) }}`)">
                                             @else
-                                                <a href="{{ asset('storage/' . $pelaporan->bukti) }}" target="_blank" class="mt-1 inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline">
+                                                <a href="{{ asset($pelaporan->bukti) }}" target="_blank" class="mt-1 inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                                                     <span>Lihat File Bukti</span>
                                                 </a>

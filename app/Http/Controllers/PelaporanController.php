@@ -80,8 +80,9 @@ class PelaporanController extends Controller
                 $sarana = str_replace(' ', '', $request->sarana);
                 $lokasi = str_replace(' ', '', $request->lokasi);
 
-                $filename = 'bukti_' . $sarana . '_' . $lokasi . '.' . $file->getClientOriginalExtension();
-                $buktiPath = $file->storeAs('buktilaporan', $filename, 'public');
+                $filename = 'bukti_' . $sarana . '_' . $lokasi . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('buktilaporan'), $filename);
+                $buktiPath = 'buktilaporan/' . $filename;
             }
 
             $pelaporanBaru = Pelaporan::create([
