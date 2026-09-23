@@ -75,34 +75,89 @@
         <div>
             @if (Auth::user()->role === 'admin')
                 <div class="px-3 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                    Kelola Fasilitas
+                    Pengelolaan Sarpras
                 </div>
                 <nav class="space-y-1">
-                    {{-- Tindak Lanjut --}}
-                    <a href="{{ route('tindak-lanjut.index') }}" 
-                       class="flex items-center px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ request()->routeIs('tindak-lanjut.*') ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                        <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ request()->routeIs('tindak-lanjut.*') ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                        </svg>
-                        Tindak Lanjut Pelaporan
-                    </a>
+                    {{-- Laporan Kerusakan (Dropdown Accordion) --}}
+                    <div x-data="{ open: {{ (request()->routeIs('pelaporan.*') || request()->routeIs('tindak-lanjut.*')) ? 'true' : 'false' }} }">
+                        <button type="button" 
+                                @click="open = !open" 
+                                class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ (request()->routeIs('pelaporan.*') || request()->routeIs('tindak-lanjut.*')) ? 'bg-teal-50 text-teal-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ (request()->routeIs('pelaporan.*') || request()->routeIs('tindak-lanjut.*')) ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span>Laporan Kerusakan</span>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" 
+                                 :class="open ? 'rotate-180 text-teal-600' : ''" 
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" 
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150" 
+                             x-transition:enter-start="opacity-0 -translate-y-1" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             class="pl-7 pr-2 py-1 space-y-1">
+                            <a href="{{ route('pelaporan.index') }}" 
+                               class="block px-2.5 py-1.5 text-xs rounded-md transition-colors {{ request()->routeIs('pelaporan.index') || request()->routeIs('pelaporan.show') ? 'font-bold text-teal-700 bg-teal-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                &bull; Semua Data Laporan
+                            </a>
+                            <a href="{{ route('pelaporan.create') }}" 
+                               class="block px-2.5 py-1.5 text-xs rounded-md transition-colors {{ request()->routeIs('pelaporan.create') ? 'font-bold text-teal-700 bg-teal-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                &bull; Buat Laporan Baru
+                            </a>
+                            <a href="{{ route('tindak-lanjut.index') }}" 
+                               class="block px-2.5 py-1.5 text-xs rounded-md transition-colors {{ request()->routeIs('tindak-lanjut.*') ? 'font-bold text-teal-700 bg-teal-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                &bull; Tindak Lanjut
+                            </a>
+                        </div>
+                    </div>
 
-                    {{-- Pemeliharaan Rutin --}}
-                    <a href="{{ route('pemeliharaan-rutin.index') }}" 
-                       class="flex items-center px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ request()->routeIs('pemeliharaan-rutin.*') ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                        <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ request()->routeIs('pemeliharaan-rutin.*') ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        Pemeliharaan Rutin
-                    </a>
+                    {{-- Rencana Pemeliharaan (Dropdown Accordion) --}}
+                    <div x-data="{ open: {{ (request()->routeIs('pemeliharaan-rutin.*') || request()->routeIs('pemeliharaan-darurat.*')) ? 'true' : 'false' }} }">
+                        <button type="button" 
+                                @click="open = !open" 
+                                class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ (request()->routeIs('pemeliharaan-rutin.*') || request()->routeIs('pemeliharaan-darurat.*')) ? 'bg-teal-50 text-teal-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ (request()->routeIs('pemeliharaan-rutin.*') || request()->routeIs('pemeliharaan-darurat.*')) ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span>Rencana Pemeliharaan</span>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" 
+                                 :class="open ? 'rotate-180 text-teal-600' : ''" 
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" 
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150" 
+                             x-transition:enter-start="opacity-0 -translate-y-1" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             class="pl-7 pr-2 py-1 space-y-1">
+                            <a href="{{ route('pemeliharaan-rutin.index') }}" 
+                               class="block px-2.5 py-1.5 text-xs rounded-md transition-colors {{ request()->routeIs('pemeliharaan-rutin.*') ? 'font-bold text-teal-700 bg-teal-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                &bull; Pemeliharaan Rutin
+                            </a>
+                            <a href="{{ route('pemeliharaan-darurat.index') }}" 
+                               class="block px-2.5 py-1.5 text-xs rounded-md transition-colors {{ request()->routeIs('pemeliharaan-darurat.*') ? 'font-bold text-teal-700 bg-teal-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                &bull; Pemeliharaan Darurat
+                            </a>
+                        </div>
+                    </div>
 
-                    {{-- Pemeliharaan Darurat --}}
-                    <a href="{{ route('pemeliharaan-darurat.index') }}" 
-                       class="flex items-center px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ request()->routeIs('pemeliharaan-darurat.*') ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                        <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ request()->routeIs('pemeliharaan-darurat.*') ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    {{-- Kelola Admin --}}
+                    <a href="{{ route('admin.index') }}" 
+                       class="flex items-center px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ request()->routeIs('admin.*') ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                        <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ request()->routeIs('admin.*') ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        Pemeliharaan Darurat
+                        Kelola Admin
                     </a>
 
                     {{-- Ekspor Laporan --}}
@@ -112,15 +167,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Ekspor Laporan
-                    </a>
-
-                    {{-- Manajemen Admin --}}
-                    <a href="{{ route('admin.index') }}" 
-                       class="flex items-center px-3 py-2 text-xs font-semibold rounded-md transition-colors {{ request()->routeIs('admin.*') ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                        <svg class="w-4 h-4 mr-2.5 flex-shrink-0 {{ request()->routeIs('admin.*') ? 'text-teal-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Manajemen Admin
                     </a>
                 </nav>
             @else

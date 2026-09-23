@@ -55,32 +55,7 @@
                     </div>
                 </div>
 
-                {{-- 2. Menu Utama --}}
-                <div>
-                    <div class="mb-3">
-                        <h3 class="font-heading text-lg font-bold text-gray-900">Menu Utama</h3>
-                        <p class="text-xs text-gray-500">Pintasan navigasi cepat pengelolaan sarana</p>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        
-                        <x-ui.menu-card title="Laporan Kerusakan" :isDropdown="true">
-                            <a href="{{ route('pelaporan.create') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Buat Laporan Baru</a>
-                            <a href="{{ route('pelaporan.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Lihat Semua Laporan</a>
-                            <a href="{{ route('tindak-lanjut.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Tindak Lanjut</a>
-                        </x-ui.menu-card>
-
-                        <x-ui.menu-card title="Rencana Pemeliharaan" :isDropdown="true">
-                            <a href="{{ route('pemeliharaan-rutin.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Pemeliharaan Rutin</a>
-                            <a href="{{ route('pemeliharaan-darurat.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Pemeliharaan Darurat</a>
-                        </x-ui.menu-card>
-
-                        <x-ui.menu-card title="Kelola Admin" href="{{ route('admin.index') }}" />
-
-                        <x-ui.menu-card title="Ekspor Laporan" href="{{ route('ekspor.index') }}" />
-                    </div>
-                </div>
-
-                {{-- 3. Tabel Laporan Kerusakan Terbaru (Dengan Skeleton Loader) --}}
+                {{-- Tabel Laporan Kerusakan Terbaru (Dengan Skeleton Loader) --}}
                 <div class="bg-white p-5 sm:p-6 rounded-md shadow-sm border border-gray-200" 
                      x-data="{ tableLoading: true }" 
                      x-init="setTimeout(() => tableLoading = false, 350)">
