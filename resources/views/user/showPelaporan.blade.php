@@ -1,72 +1,114 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detail Laporan Anda') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="font-heading font-bold text-xl text-gray-900 leading-tight">
+                    {{ __('Detail Laporan Kerusakan') }}
+                </h1>
+                <p class="text-xs text-gray-500 mt-1">
+                    Informasi lengkap mengenai laporan dan riwayat tindakan
+                </p>
+            </div>
+            <a href="{{ route('pelaporan.index') }}" class="text-xs sm:text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors">
+                &larr; Kembali ke Daftar
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 sm:p-8 text-gray-900">
-                    
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900">Detail Laporan</h3>
-                            <p class="text-sm text-gray-600 mt-1">Sarana: <strong>{{ $pelaporan->sarana }}</strong></p>
-                        </div>
-                        <a href="{{ route('pelaporan.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50">
-                            Kembali
-                        </a>
+    <div class="py-6 sm:py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
+                
+                {{-- Header Rincian --}}
+                <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-gray-50/50">
+                    <div>
+                        <span class="text-xs text-gray-500">Sarana / Prasarana:</span>
+                        <h2 class="text-lg font-heading font-bold text-gray-900">{{ $pelaporan->sarana }}</h2>
                     </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">Status:</span>
+                        <x-ui.badge :type="$pelaporan->status">
+                            {{ str_replace('_', ' ', ucfirst($pelaporan->status)) }}
+                        </x-ui.badge>
+                    </div>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6">
-                        <div class="space-y-4">
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-600">Lokasi</h4>
-                                <p>{{ $pelaporan->lokasi }}</p>
+                <div class="p-6 sm:p-8">
+                    {{-- Flat Layout Tanpa Card Dalam Card --}}
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        {{-- Kolom Kiri: Informasi Laporan & Bukti --}}
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="space-y-4 text-sm">
+                                <div class="border-b border-gray-100 pb-3">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Lokasi Sarana</span>
+                                    <p class="font-medium text-gray-800 mt-1">{{ $pelaporan->lokasi }}</p>
+                                </div>
+
+                                <div class="border-b border-gray-100 pb-3">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Tanggal Pelaporan</span>
+                                    <p class="text-gray-700 mt-1">
+                                        {{ $pelaporan->created_at->timezone('Asia/Makassar')->format('d F Y, H:i') }} WITA
+                                    </p>
+                                </div>
+
+                                <div class="border-b border-gray-100 pb-3">
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Deskripsi Kerusakan</span>
+                                    <p class="text-gray-700 whitespace-pre-line leading-relaxed">{{ $pelaporan->deskripsi }}</p>
+                                </div>
                             </div>
+
+                            {{-- Bukti Kerusakan --}}
                             <div>
-                                <h4 class="text-sm font-semibold text-gray-600">Deskripsi Kerusakan</h4>
-                                <p>{{ $pelaporan->deskripsi }}</p>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-semibold text-gray-600">Bukti</h4>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Berkas / Foto Bukti</span>
                                 @if ($pelaporan->bukti)
                                     @php
                                         $fileExtension = strtolower(pathinfo($pelaporan->bukti, PATHINFO_EXTENSION));
                                         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
                                     @endphp
                                     @if (in_array($fileExtension, $imageExtensions))
-                                        <img src="{{ asset($pelaporan->bukti) }}" class="mt-1 w-full max-w-sm h-auto object-cover rounded-md cursor-pointer" onclick="showImageModal(`{{ asset($pelaporan->bukti) }}`)">
+                                        <div class="cursor-pointer inline-block overflow-hidden rounded-md border border-gray-200 max-w-sm shadow-sm" onclick="showImageModal(`{{ asset($pelaporan->bukti) }}`)">
+                                            <img src="{{ asset($pelaporan->bukti) }}" class="w-full h-auto max-h-64 object-cover" alt="Bukti {{ $pelaporan->sarana }}">
+                                        </div>
+                                        <p class="text-[11px] text-gray-400 mt-1">Klik gambar untuk memperbesar</p>
                                     @else
-                                        <a href="{{ asset($pelaporan->bukti) }}" target="_blank" class="mt-1 inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                                            <span>Lihat File Bukti</span>
+                                        <a href="{{ asset($pelaporan->bukti) }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-md border border-teal-200 bg-teal-50 text-teal-700 hover:bg-teal-100 transition-colors text-xs font-semibold">
+                                            Unduh / Buka Dokumen Bukti
                                         </a>
                                     @endif
                                 @else
-                                    <p class="mt-1 text-sm text-gray-500 italic">Tidak ada bukti.</p>
+                                    <p class="text-xs text-gray-400 italic">Tidak ada berkas bukti yang dilampirkan.</p>
                                 @endif
                             </div>
                         </div>
 
-                        <div>
-                            <h4 class="text-sm font-semibold text-gray-600 mb-4">Log Aktivitas</h4>
-                            <div class="border-l-2 border-gray-200 pl-6 space-y-6">
+                        {{-- Kolom Kanan: Log Aktivitas & Progres --}}
+                        <div class="border-t lg:border-t-0 lg:border-l border-gray-200 pt-6 lg:pt-0 lg:pl-8">
+                            <h3 class="text-sm font-heading font-bold text-gray-900 mb-4">
+                                Riwayat Log Aktivitas
+                            </h3>
+
+                            <div class="relative border-l-2 border-teal-600 ml-2 pl-4 space-y-5">
                                 @forelse ($pelaporan->logs as $log)
                                     <div class="relative">
-                                        <div class="absolute -left-[30px] top-1 h-2.5 w-2.5 rounded-full bg-gray-400 ring-4 ring-white"></div>
-                                        <p class="text-sm text-gray-800">{{ $log->aktivitas }}</p>
-                                        <p class="text-xs text-gray-500 mt-1">{{ $log->created_at->timezone('Asia/Makassar')->format('d M Y, H:i') }}</p>
+                                        <div class="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-md bg-teal-600"></div>
+                                        <p class="text-xs sm:text-sm font-medium text-gray-800 leading-snug">{{ $log->aktivitas }}</p>
+                                        <p class="text-[11px] text-gray-400 mt-0.5">
+                                            {{ $log->created_at->timezone('Asia/Makassar')->format('d M Y, H:i') }} WITA
+                                        </p>
                                     </div>
                                 @empty
-                                    <p class="text-sm text-gray-500 italic">Belum ada aktivitas.</p>
+                                    <div class="relative">
+                                        <div class="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-md bg-gray-300"></div>
+                                        <p class="text-xs text-gray-400 italic">Belum ada riwayat penanganan untuk laporan ini.</p>
+                                    </div>
                                 @endforelse
                             </div>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -78,8 +120,9 @@
         Swal.fire({
             imageUrl: imageUrl,
             imageWidth: '90%',
-            imageAlt: 'Bukti Laporan',
-            confirmButtonText: 'Tutup'
+            imageAlt: 'Bukti Kerusakan',
+            confirmButtonText: 'Tutup',
+            confirmButtonColor: '#0D9488'
         });
     }
 </script>

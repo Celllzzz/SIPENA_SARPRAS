@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+html {
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    background-color: #F9FAFB;
+}
+
+body {
+    background-color: #F9FAFB;
+    font-family: 'Open Sans', 'Roboto', sans-serif;
+    color: #1F2937;
+    margin: 0;
+    padding: 0;
+}
+
+/* Smooth page entrance transition */
+.page-fade-in {
+    animation: pageFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0.85;
+        transform: translateY(2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Top Progress Bar on navigation */
+#top-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: #0D9488;
+    z-index: 99999;
+    transition: width 0.2s ease-out, opacity 0.25s ease-out;
+    box-shadow: 0 0 8px rgba(13, 148, 136, 0.6);
+}

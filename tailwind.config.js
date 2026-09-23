@@ -12,13 +12,13 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Open Sans"', ...defaultTheme.fontFamily.sans],
+                heading: ['Roboto', ...defaultTheme.fontFamily.sans],
             },
         },
     },
 
     plugins: [
         forms,
-        require('@tailwindcss/line-clamp'),
     ],
 };

@@ -1,114 +1,132 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('SIPENA-Sarpras') }}
-        </h2>
+        <div>
+            <h1 class="font-heading font-bold text-xl text-gray-900 leading-tight">
+                {{ __('Dasbor SIPENA-SARPRAS') }}
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">
+                Ringkasan data pelaporan kerusakan dan status pemeliharaan fasilitas
+            </p>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6 text-gray-900">
-                    <span>Selamat datang kembali, </span><strong>{{ Auth::user()->name }}</strong>!
+            {{-- Bar Sambutan Pengguna --}}
+            <div class="bg-white border border-gray-200 p-4 sm:px-6 sm:py-4 rounded-md shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <span class="text-xs text-gray-500 block">Selamat datang kembali,</span>
+                    <h2 class="text-lg sm:text-xl font-heading font-bold text-gray-900 mt-0.5">
+                        {{ Auth::user()->name }}
+                    </h2>
+                </div>
+                <div class="text-xs text-gray-500 sm:text-right">
+                    <span class="font-medium text-gray-800 block capitalize">{{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
+                    <span class="text-gray-400">Sistem Pengelolaan Sarana & Prasarana</span>
                 </div>
             </div>
 
             @if(Auth::user()->role === 'admin')
                 {{-- TAMPILAN DASHBOARD UNTUK ADMIN --}}
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-gray-700 text-white p-5 rounded-lg shadow-md">
-                        <h3 class="text-xl sm:text-2xl font-bold">{{ $totalLaporan }}</h3>
-                        <p class="mt-1 text-sm sm:text-base">Total Laporan</p>
-                    </div>
-                    <div class="bg-yellow-500 text-white p-5 rounded-lg shadow-md">
-                        <h3 class="text-xl sm:text-2xl font-bold">{{ $laporanVerifikasi }}</h3>
-                        <p class="mt-1 text-sm sm:text-base">Perlu Verifikasi</p>
-                    </div>
-                    <div class="bg-blue-500 text-white p-5 rounded-lg shadow-md">
-                        <h3 class="text-xl sm:text-2xl font-bold">{{ $laporanDalamPerbaikan }}</h3>
-                        <p class="mt-1 text-sm sm:text-base">Dalam Perbaikan</p>
-                    </div>
-                    <div class="bg-green-500 text-white p-5 rounded-lg shadow-md">
-                        <h3 class="text-xl sm:text-2xl font-bold">{{ $laporanSelesai }}</h3>
-                        <p class="mt-1 text-sm sm:text-base">Laporan Selesai</p>
+                {{-- 1. Kartu KPI Statistik (Warna Solid, Tanpa Gradient, Rounded MD) --}}
+                <div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <x-ui.stat-card 
+                            title="Total Laporan" 
+                            :value="$totalLaporan" 
+                            variant="blue" />
+
+                        <x-ui.stat-card 
+                            title="Perlu Verifikasi" 
+                            :value="$laporanVerifikasi" 
+                            variant="amber" />
+
+                        <x-ui.stat-card 
+                            title="Dalam Perbaikan" 
+                            :value="$laporanDalamPerbaikan" 
+                            variant="sky" />
+
+                        <x-ui.stat-card 
+                            title="Laporan Selesai" 
+                            :value="$laporanSelesai" 
+                            variant="emerald" />
                     </div>
                 </div>
 
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Menu Utama</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {{-- 2. Menu Utama --}}
+                <div>
+                    <div class="mb-3">
+                        <h3 class="font-heading text-lg font-bold text-gray-900">Menu Utama</h3>
+                        <p class="text-xs text-gray-500">Pintasan navigasi cepat pengelolaan sarana</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         
-                        <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open" class="w-full h-full bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center focus:outline-none text-sm sm:text-base">
-                                Laporan Kerusakan
-                            </button>
-                            <div x-show="open" @click.away="open = false" x-transition class="absolute z-10 mt-2 w-full min-w-max rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5" style="display: none;">
-                                <div class="py-1">
-                                    <a href="{{ route('pelaporan.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Buat Laporan Baru</a>
-                                    <a href="{{ route('pelaporan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lihat Laporan</a>
-                                    <a href="{{ route('tindak-lanjut.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tindak Lanjut</a>
-                                </div>
-                            </div>
-                        </div>
+                        <x-ui.menu-card title="Laporan Kerusakan" :isDropdown="true">
+                            <a href="{{ route('pelaporan.create') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Buat Laporan Baru</a>
+                            <a href="{{ route('pelaporan.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Lihat Semua Laporan</a>
+                            <a href="{{ route('tindak-lanjut.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Tindak Lanjut</a>
+                        </x-ui.menu-card>
 
-                        <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open" class="w-full h-full bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center focus:outline-none text-sm sm:text-base">
-                                Rencana Pemeliharaan
-                            </button>
-                            <div x-show="open" @click.away="open = false" x-transition class="absolute z-10 mt-2 w-full min-w-max rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5" style="display: none;">
-                                <div class="py-1">
-                                    <a href="{{ route('pemeliharaan-rutin.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pemeliharaan Rutin</a>
-                                    <a href="{{ route('pemeliharaan-darurat.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pemeliharaan Darurat</a>
-                                </div>
-                            </div>
-                        </div>
+                        <x-ui.menu-card title="Rencana Pemeliharaan" :isDropdown="true">
+                            <a href="{{ route('pemeliharaan-rutin.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Pemeliharaan Rutin</a>
+                            <a href="{{ route('pemeliharaan-darurat.index') }}" class="block px-4 py-2.5 text-xs sm:text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors">Pemeliharaan Darurat</a>
+                        </x-ui.menu-card>
 
-                        <a href="{{ route('admin.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
-                            Kelola Admin
-                        </a>
-                    
-                        <a href="{{ route('ekspor.index') }}" class="flex items-center justify-center bg-gray-800 text-white p-4 rounded-lg shadow hover:bg-gray-700 transition text-center text-sm sm:text-base">
-                            Ekspor Laporan
-                        </a>
+                        <x-ui.menu-card title="Kelola Admin" href="{{ route('admin.index') }}" />
+
+                        <x-ui.menu-card title="Ekspor Laporan" href="{{ route('ekspor.index') }}" />
                     </div>
                 </div>
 
+                {{-- 3. Tabel Laporan Kerusakan Terbaru (Dengan Skeleton Loader) --}}
+                <div class="bg-white p-5 sm:p-6 rounded-md shadow-sm border border-gray-200" 
+                     x-data="{ tableLoading: true }" 
+                     x-init="setTimeout(() => tableLoading = false, 350)">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                        <div>
+                            <h3 class="font-heading font-bold text-base sm:text-lg text-gray-900">Laporan Kerusakan Terbaru</h3>
+                            <p class="text-xs text-gray-500">Daftar laporan sarana prasarana yang baru diajukan</p>
+                        </div>
+                        <a href="{{ route('pelaporan.index') }}" class="text-xs sm:text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors">
+                            Lihat Semua Laporan &rarr;
+                        </a>
+                    </div>
 
-                <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-                    <h3 class="font-semibold text-lg mb-4">Laporan Kerusakan Terbaru</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                             <thead class="bg-gray-50">
+                    {{-- Skeleton Placeholder saat Memuat --}}
+                    <div x-show="tableLoading">
+                        <x-ui.skeleton-table :rows="4" />
+                    </div>
+
+                    {{-- Tabel Sebenarnya --}}
+                    <div x-show="!tableLoading" x-cloak class="overflow-x-auto rounded-md border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 text-left">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sarana</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sarana</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-100">
                                 @forelse ($laporanTerbaru as $laporan)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $loop->iteration }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d M Y') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $laporan->sarana }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->lokasi }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                @if($laporan->status == 'verifikasi') bg-yellow-100 text-yellow-800 @endif
-                                                @if($laporan->status == 'dalam_perbaikan') bg-blue-100 text-blue-800 @endif
-                                                @if($laporan->status == 'selesai') bg-green-100 text-green-800 @endif
-                                            ">
+                                    <tr class="hover:bg-gray-50/70 transition-colors">
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 font-medium">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">{{ $laporan->created_at->format('d M Y') }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900">{{ $laporan->sarana }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">{{ $laporan->lokasi }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <x-ui.badge :type="$laporan->status">
                                                 {{ str_replace('_', ' ', ucfirst($laporan->status)) }}
-                                            </span>
+                                            </x-ui.badge>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="5" class="px-4 py-8 text-center text-xs sm:text-sm text-gray-500">
                                             Belum ada laporan yang masuk.
                                         </td>
                                     </tr>
@@ -121,51 +139,58 @@
             @else
                 {{-- TAMPILAN DASHBOARD UNTUK USER BIASA --}}
                 
-                <div class="mb-6">
-                    <a href="{{ route('pelaporan.create') }}" class="inline-flex items-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition">
-                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
+                <div>
+                    <a href="{{ route('pelaporan.create') }}" class="inline-flex items-center justify-center min-h-[42px] bg-teal-600 text-white font-semibold text-xs uppercase tracking-wider py-2.5 px-5 rounded-md shadow-sm hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
                         Buat Laporan Baru
                     </a>
                 </div>
 
-                <div class="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
-                        <h3 class="font-semibold text-lg text-gray-800 mb-2 sm:mb-0">Riwayat Laporan Anda</h3>
-                        <a href="{{ route('pelaporan.index') }}" class="text-sm text-blue-600 hover:underline">Lihat Semua</a>
+                <div class="bg-white p-5 sm:p-6 rounded-md shadow-sm border border-gray-200"
+                     x-data="{ tableLoading: true }" 
+                     x-init="setTimeout(() => tableLoading = false, 350)">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                        <div>
+                            <h3 class="font-heading font-bold text-base sm:text-lg text-gray-900">Riwayat Laporan Anda</h3>
+                            <p class="text-xs text-gray-500">Daftar laporan sarana yang telah Anda ajukan</p>
+                        </div>
+                        <a href="{{ route('pelaporan.index') }}" class="text-xs sm:text-sm font-semibold text-teal-700 hover:text-teal-800 transition-colors">
+                            Lihat Semua Laporan &rarr;
+                        </a>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                             <thead class="bg-gray-50">
+
+                    {{-- Skeleton Placeholder saat Memuat --}}
+                    <div x-show="tableLoading">
+                        <x-ui.skeleton-table :rows="3" />
+                    </div>
+
+                    {{-- Tabel Sebenarnya --}}
+                    <div x-show="!tableLoading" x-cloak class="overflow-x-auto rounded-md border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 text-left">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sarana</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">No</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sarana</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi</th>
+                                    <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-100">
                                 @forelse ($laporanUser as $laporan)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $loop->iteration }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->created_at->format('d M Y') }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $laporan->sarana }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->lokasi }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                @if($laporan->status == 'verifikasi') bg-yellow-100 text-yellow-800 @endif
-                                                @if($laporan->status == 'dalam_perbaikan') bg-blue-100 text-blue-800 @endif
-                                                @if($laporan->status == 'selesai') bg-green-100 text-green-800 @endif
-                                            ">
+                                    <tr class="hover:bg-gray-50/70 transition-colors">
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-500 font-medium">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">{{ $laporan->created_at->format('d M Y') }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm font-semibold text-gray-900">{{ $laporan->sarana }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">{{ $laporan->lokasi }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <x-ui.badge :type="$laporan->status">
                                                 {{ str_replace('_', ' ', ucfirst($laporan->status)) }}
-                                            </span>
+                                            </x-ui.badge>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="5" class="px-4 py-8 text-center text-xs sm:text-sm text-gray-500">
                                             Anda belum pernah membuat laporan.
                                         </td>
                                     </tr>
@@ -181,7 +206,6 @@
     </div>
 </x-app-layout>
 
-{{-- Script SweetAlert untuk menangkap pesan session --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('success'))
 <script>
@@ -190,7 +214,8 @@
         title: 'Berhasil!',
         text: '{{ session('success') }}',
         timer: 1500, 
-        showConfirmButton: false
+        showConfirmButton: false,
+        confirmButtonColor: '#0D9488'
     });
 </script>
 @endif
@@ -200,7 +225,8 @@
     Swal.fire({
         icon: 'error',
         title: 'Gagal!',
-        text: '{{ session('error') }}'
+        text: '{{ session('error') }}',
+        confirmButtonColor: '#0D9488'
     });
 </script>
 @endif
