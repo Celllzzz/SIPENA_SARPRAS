@@ -5,21 +5,21 @@
 
     RewriteEngine On
 
-    # Blokir akses langsung ke berkas dan folder sensitif
+    # Blokir akses langsung ke berkas dan folder sistem sensitif
     RewriteRule ^(\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|artisan) - [F,L,NC]
     RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor)(/.*)?$ - [F,L,NC]
 
-    # Jika file atau direktori ada langsung di root (misal buktilaporan), layani langsung
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
+    # Khusus berkas upload bukti laporan jika diletakkan di root
+    RewriteCond %{REQUEST_URI} ^/buktilaporan/
+    RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
-    # Teruskan semua request lainnya ke direktori public/
+    # Teruskan seluruh request ke folder public/
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ public/$1 [L,QSA]
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
-# Blokir akses ke hidden files (.env, .git, dll)
+# Blokir akses ke berkas tersembunyi
 <FilesMatch "^\.(env|git)">
     Order allow,deny
     Deny from all
