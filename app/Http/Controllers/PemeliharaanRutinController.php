@@ -29,14 +29,14 @@ class PemeliharaanRutinController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'sarana' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'frekuensi' => 'required|string',
             'tanggal_berikutnya' => 'required|date',
         ]);
 
-        PemeliharaanRutin::create($request->all());
+        PemeliharaanRutin::create($validated);
 
         return redirect()->route('pemeliharaan-rutin.index')->with('success', 'Jadwal pemeliharaan baru berhasil ditambahkan.');
     }
@@ -49,7 +49,7 @@ class PemeliharaanRutinController extends Controller
 
     public function update(Request $request, PemeliharaanRutin $pemeliharaanRutin)
     {
-        $request->validate([
+        $validated = $request->validate([
             'sarana' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'frekuensi' => 'required|string',
@@ -57,8 +57,7 @@ class PemeliharaanRutinController extends Controller
             'status' => 'required|string|in:Terjadwal,Ditangguhkan',
         ]);
 
-        $data = $request->except('catatan');
-        $pemeliharaanRutin->update($request->all());
+        $pemeliharaanRutin->update($validated);
 
         return redirect()->route('pemeliharaan-rutin.index')->with('success', 'Jadwal pemeliharaan berhasil diperbarui.');
     }

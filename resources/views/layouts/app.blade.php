@@ -5,7 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'SIPENA-SARPRAS') }}</title>
+        <title>{{ isset($title) ? $title . ' - SIPENA SARPRAS PN Maros' : 'SIPENA SARPRAS - Pengadilan Negeri Maros' }}</title>
+        <meta name="description" content="Sistem Informasi Perencanaan dan Pelaporan Pemeliharaan Sarana Prasarana di lingkungan Pengadilan Negeri Maros.">
+        <link rel="canonical" href="{{ url()->current() }}">
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+
+        <!-- Open Graph / Meta Sosial -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="{{ isset($title) ? $title . ' - SIPENA SARPRAS PN Maros' : 'SIPENA SARPRAS - Pengadilan Negeri Maros' }}">
+        <meta property="og:description" content="Sistem Informasi Perencanaan dan Pelaporan Pemeliharaan Sarana Prasarana di lingkungan Pengadilan Negeri Maros.">
+        <meta property="og:image" content="{{ asset('images/LogoSipena.png') }}">
 
         <!-- Fonts: Open Sans & Roboto -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

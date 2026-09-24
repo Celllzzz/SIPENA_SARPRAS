@@ -24,14 +24,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Form pelaporan
+    // Form pelaporan dengan rate limiting (maks 30 submit per menit)
     Route::get('/pelaporan/create', [PelaporanController::class, 'create'])->name('pelaporan.create');
-    Route::post('/pelaporan', [PelaporanController::class, 'store'])->name('pelaporan.store');
+    Route::post('/pelaporan', [PelaporanController::class, 'store'])->middleware('throttle:30,1')->name('pelaporan.store');
 
-    //Halaman Laporan
+    // Halaman Laporan
     Route::get('/data-pelaporan', [PelaporanController::class, 'index'])->name('pelaporan.index');
-
     Route::get('/pelaporan/{pelaporan}', [PelaporanController::class, 'show'])->name('pelaporan.show');
+
+    // Notifikasi untuk semua user yang terotentikasi
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/mark-all-read', [NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.markAllAsRead');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -55,9 +58,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/admin/{admin}', [AdminController::class, 'destroy'])->name('admin.destroy');
     Route::get('/admin/{admin}/change-password', [AdminController::class, 'showChangePasswordForm'])->name('admin.change_password_form');
     Route::put('/admin/{admin}/change-password', [AdminController::class, 'updatePassword'])->name('admin.change_password_update');
-    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
-    Route::post('/notifikasi/mark-all-read', [NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.markAllAsRead');
-
 });
 
 require __DIR__.'/auth.php';

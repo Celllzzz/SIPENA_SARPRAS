@@ -30,7 +30,7 @@ class PemeliharaanDaruratController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'sarana' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'deskripsi_kerusakan' => 'required|string',
@@ -38,7 +38,7 @@ class PemeliharaanDaruratController extends Controller
             'tanggal_seharusnya' => 'nullable|date|after_or_equal:tanggal_pemeliharaan',
         ]);
 
-        PemeliharaanDarurat::create($request->all() + ['user_id' => Auth::id()]);
+        PemeliharaanDarurat::create($validated + ['user_id' => Auth::id()]);
 
         return redirect()->route('pemeliharaan-darurat.index')->with('success', 'Catatan pemeliharaan darurat berhasil ditambahkan.');
     }
@@ -50,7 +50,7 @@ class PemeliharaanDaruratController extends Controller
 
     public function update(Request $request, PemeliharaanDarurat $pemeliharaanDarurat)
     {
-        $request->validate([
+        $validated = $request->validate([
             'sarana' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
             'deskripsi_kerusakan' => 'required|string',
@@ -61,7 +61,7 @@ class PemeliharaanDaruratController extends Controller
             'catatan_perbaikan' => 'nullable|string',
         ]);
 
-        $pemeliharaanDarurat->update($request->all() + ['user_id' => Auth::id()]);
+        $pemeliharaanDarurat->update($validated + ['user_id' => Auth::id()]);
 
         return redirect()->route('pemeliharaan-darurat.index')->with('success', 'Data pemeliharaan darurat berhasil diperbarui.');
     }

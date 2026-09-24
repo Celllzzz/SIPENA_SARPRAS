@@ -1,0 +1,21 @@
+# Proteksi Direktori Upload Bukti Laporan
+# Larang eksekusi script apa pun (PHP, CGI, Python, Shell, dll)
+
+<FilesMatch "\.(php|php[0-9]|phP|phtml|pht|phar|sh|cgi|pl|exe|bat|cmd)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Matikan engine PHP jika modul mod_php terpasang
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Larang eksekusi script dan directory listing
+Options -Indexes -ExecCGI

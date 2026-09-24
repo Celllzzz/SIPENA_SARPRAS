@@ -77,11 +77,39 @@ class PelaporanController extends Controller
             if ($request->hasFile('bukti')) {
                 $file = $request->file('bukti');
 
-                $sarana = str_replace(' ', '', $request->sarana);
-                $lokasi = str_replace(' ', '', $request->lokasi);
+                // Sanitasi nama sarana & lokasi agar hanya alphanumeric dan underscore
+                $saranaClean = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', $request->sarana));
+                $lokasiClean = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', $request->lokasi));
 
-                $filename = 'bukti_' . $sarana . '_' . $lokasi . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('buktilaporan'), $filename);
+                // Keamanan: Validasi ekstensi berdasarkan binary MIME type asli di server (bukan nama dari user)
+                $extension = $file->extension() ?: $file->guessExtension() ?: 'jpg';
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf'];
+
+                if (!in_array(strtolower($extension), $allowedExtensions)) {
+                    return redirect()->back()
+                        ->with('error', 'Format file tidak diizinkan! Hanya JPG, JPEG, PNG, dan PDF yang diperbolehkan.')
+                        ->withInput();
+                }
+
+                $filename = 'bukti_' . $saranaClean . '_' . $lokasiClean . '_' . time() . '.' . $extension;
+
+                // Hybrid Path: otomatis mendeteksi environment cPanel (public_html) vs Localhost (public)
+                $targetDir = is_dir(base_path('../public_html')) 
+                    ? base_path('../public_html/buktilaporan') 
+                    : public_path('buktilaporan');
+
+                if (!file_exists($targetDir)) {
+                    mkdir($targetDir, 0755, true);
+                }
+
+                // Pastikan proteksi .htaccess anti-eksekusi skrip selalu aktif di folder upload
+                $htaccessSource = public_path('buktilaporan/.htaccess');
+                $htaccessTarget = $targetDir . '/.htaccess';
+                if (file_exists($htaccessSource) && !file_exists($htaccessTarget)) {
+                    @copy($htaccessSource, $htaccessTarget);
+                }
+
+                $file->move($targetDir, $filename);
                 $buktiPath = 'buktilaporan/' . $filename;
             }
 
@@ -111,7 +139,8 @@ class PelaporanController extends Controller
 
             return redirect()->route('dashboard')->with('success', 'Laporan berhasil dikirim.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data!');
+            \Illuminate\Support\Facades\Log::error('Gagal menyimpan laporan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memproses laporan. Silakan coba kembali.');
         }
     }
 
