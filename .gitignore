@@ -15,6 +15,9 @@
 /node_modules
 /public/hot
 /public/storage
+/buktilaporan
+/public/buktilaporan/*
+!/public/buktilaporan/.htaccess
 /storage/*.key
 /storage/pail
 /vendor

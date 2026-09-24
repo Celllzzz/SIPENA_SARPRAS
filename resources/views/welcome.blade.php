@@ -8,7 +8,9 @@
         <title>SIPENA SARPRAS PN Maros - Sistem Informasi Sarana Prasarana</title>
         <meta name="description" content="Aplikasi resmi Pengadilan Negeri Maros untuk pelaporan kerusakan sarana, perencanaan jadwal pemeliharaan rutin, dan pemantauan perbaikan fasilitas gedung pengadilan.">
         <link rel="canonical" href="{{ url()->current() }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/LogoSipena.png') }}">
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/LogoSipena.png') }}">
 
         <!-- Open Graph / Facebook / WhatsApp -->
         <meta property="og:type" content="website">

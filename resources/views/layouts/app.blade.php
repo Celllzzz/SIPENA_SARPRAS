@@ -8,7 +8,9 @@
         <title>{{ isset($title) ? $title . ' - SIPENA SARPRAS PN Maros' : 'SIPENA SARPRAS - Pengadilan Negeri Maros' }}</title>
         <meta name="description" content="Sistem Informasi Perencanaan dan Pelaporan Pemeliharaan Sarana Prasarana di lingkungan Pengadilan Negeri Maros.">
         <link rel="canonical" href="{{ url()->current() }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/LogoSipena.png') }}">
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/LogoSipena.png') }}">
 
         <!-- Open Graph / Meta Sosial -->
         <meta property="og:type" content="website">

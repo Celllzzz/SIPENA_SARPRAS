@@ -93,9 +93,9 @@ class PelaporanController extends Controller
 
                 $filename = 'bukti_' . $saranaClean . '_' . $lokasiClean . '_' . time() . '.' . $extension;
 
-                // Hybrid Path: otomatis mendeteksi environment cPanel (public_html) vs Localhost (public)
-                $targetDir = is_dir(base_path('../public_html')) 
-                    ? base_path('../public_html/buktilaporan') 
+                // Simpan berkas bukti ke direktori public_path('buktilaporan')
+                $targetDir = is_dir(base_path('buktilaporan')) && !is_dir(public_path('buktilaporan'))
+                    ? base_path('buktilaporan')
                     : public_path('buktilaporan');
 
                 if (!file_exists($targetDir)) {
